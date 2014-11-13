@@ -1,0 +1,62 @@
+Symbol	Description
+AAL	American Airlines Group Inc.
+AAOI	Applied Optoelectronics Inc
+AAON	Aaon Inc
+AAPL	Apple Inc
+AAVL	Avalanche Biotechnologies Inc.
+AAWW	Atlas Air Worldwide Holdings
+AAXJ	All Country Asia Ex Jpn Idx MSCI Ishares
+ABAC	Aoxin Tianli Group Inc.
+ABAX	Abaxis Inc
+ABCB	Ameris Bancorp
+ABCD	Cambium Learning Group
+ABCO	The Advisory Board Company
+ABDC	Alcentra Capital Corp.
+ABGB	Abengoa S.A.
+ABIO	Arca Biopharma
+ABMD	Abiomed
+ABTL	Autobytel Inc
+ABY	Abengoa Yield Plc
+ACAD	Acadia Pharmaceuticals Inc
+ACAS	American Capital
+ACAT	Arctic Cat Inc
+ACET	Aceto Corp
+ACFN	Acorn Energy
+ACGL	Arch Capital Group Ltd
+ACHC	Acadia Healthcare Company Inc
+ACHN	Achillion Pharmaceuticals
+ACIW	Aci Worldwide
+ACLS	Axcelis Technologies
+ACOR	Acorda Therapeutics
+ACPW	Active Power
+ACRX	Acelrx Pharmaceuticals
+ACSF	American Capital Senior Floatin
+ACST	Acasti Pharma Inc
+ACTA	Actua Corporation
+ACTG	Acacia Research Corp
+ACTS	Actions Semiconductor Co.
+ACUR	Acura Pharmaceuticals
+ACWI	ACWI Index MSCI Ishares
+ACWX	ACWI Ex-US Index MSCI Ishares
+ACXM	Acxiom Corp
+ADAT	Authentidate Holding
+ADBE	Adobe Systems Incorporated
+ADEP	Adept Technology
+ADES	Advanced Emissions Solutions Inc
+ADHD	Alcobra Ltd
+ADI	Analog Devices
+ADMP	Adamis Pharmaceuticl
+ADMS	Adamas Pharmaceuticals Inc.
+ADNC	Audience Inc
+ADP	Automatic Data Processing
+ADSK	Autodesk Inc
+ADTN	Adtran Inc
+ADUS	Addus Homecare Corp
+ADVS	Advent Software
+ADXS	Advaxis Inc
+AEGN	Aegoin Corp
+AEGR	Aegerion Pharmaceuticals
+AEIS	Advanced Energy Industries
+AEPI	AEP Industries Inc
+AERI	Aerie Pharmaceuticals Inc
+AETI	American Electric Technologies

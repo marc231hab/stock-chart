@@ -8,6 +8,8 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
+class ErrorInit(Exception): 
+    pass
 
 class Stock:
 	def __init__(self, name, duration="1y"):
@@ -18,16 +20,25 @@ class Stock:
 	def initData(self):
 		print self.name
 		#link for data
+		#try:
 		link = 'http://chartapi.finance.yahoo.com/instrument/1.0/'+self.name+'/chartdata;type=quote;range='+self.duration+'/csv'
 		opened_file = urllib.urlopen(link)
 		it = 0
 		#skip text lines at start of data
-		while it <= 17:
+		if self.duration == "10d":
+			skip = 28
+		elif self.duration == "3d" or self.duration == "1d":
+			skip = 20
+		else:
+			skip = 17
+		while it <= skip:
 			opened_file.readline()
 			it += 1
 		#create numpy arrays of data
 		self.dates, self._close, self._high, self._low, self._open, self._volume = np.loadtxt(opened_file, delimiter=',', unpack=True)#, converters={0: mdates.strpdate2num('%Y%m%d')})
 		self.date_ran = np.arange(len(self.dates))
+		#except:
+		#raise ErrorInit
 
 	def simple_moving_avg(self, period, array=None):
 		if array == None:
@@ -89,10 +100,10 @@ class Stock:
 		md_line = md_line_a - md_line_b
 		sig_lin = self.exp_moving_avg(sig,md_line)
 		macd_hist = md_line - sig_lin
-		#print macd_hist
-		return macd_hist
+		self._macd = macd_hist
+		return macd_hist[len(macd_hist)-1]
 
-
+'''
 def main():
 	a = Stock("GPRO")
 	sma = a.simple_moving_avg(15)
@@ -103,5 +114,5 @@ def main():
 	plt.show()
 
 main()
-
+'''
 
