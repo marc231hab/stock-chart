@@ -51,10 +51,7 @@ class Stock:
 				first += array[i]
 				i+=1
 			first = first/period
-			i = 0
-			while i < period:
-				sma[i] = first
-				i+=1
+			sma[:period] = first
 			i = period
 			#calculate Simple Moving Average
 			while i < len(array):
@@ -70,6 +67,7 @@ class Stock:
 			return sma
 		else:
 			print "not enough data"
+			return np.zeros(10)
 
 
 	def exp_moving_avg(self, period, array=None):
@@ -85,11 +83,8 @@ class Stock:
 				first += array[i]
 				i+=1
 			first = first/period
-			i = 0
 			#calculate Exponential Moving Average
-			while i < period:
-				ema[i] = first
-				i+=1
+			ema[:period] = first
 			k=period
 			smoothing = 2./(period+1)
 			while k < len(array):
@@ -99,6 +94,7 @@ class Stock:
 			return ema
 		else:
 			print "not enough data"
+			return np.zeros(10)
 
 	def MACD(self,a=12,b=26,sig=9):
 		#calculate parts of MACD Line
@@ -135,16 +131,47 @@ class Stock:
 			i+=1
 		self._vwap = vwap_vals
 
+	def RSI(self, period=14):
+		if len(self._close) > period and period != 0:
+			#get day to day changes in values
+			changes = np.diff(self._close)
+			sub_change = changes[:period+1]
+			#sum of up and down days
+			neg = -sub_change[sub_change<0].sum()/period
+			pos = sub_change[sub_change>0].sum()/period
+			rs = pos/neg
+			rsi_vals = np.zeros(len(self._close))
+			#set initial values
+			rsi_vals[:period] = 100.-100./(1.+rs)
+			#calculate values until end of data
+			for i in range(period, len(self._close)):
+				change = changes[i-1]
+				if change > 0:
+					pos_val = change
+					neg_val = 0.
+				else:
+					pos_val = 0.
+					neg_val = -change
+				pos = (pos*(period-1)+pos_val)/period
+				neg = (neg*(period-1)+neg_val)/period
+				rs = pos/neg
+				rsi_vals[i]=100.-100./(1.+rs)
+			self._rsi = rsi_vals
+			return rsi_vals
+		else:
+			print "not enough data"
+			self._rsi = np.zeros(10)
+			return self._rsi
 
 
-'''
 def main():
-	a = Stock("GPRO","1d")
+	a = Stock("GPRO")
 	sma = a.simple_moving_avg(15)
 	ema = a.exp_moving_avg(10)
 	a.MACD()
 	a.ROC()
 	a.VWAP()
+	a.RSI()
 	x=0
 	y=len(a._close)
 	candleAr = []
@@ -152,12 +179,12 @@ def main():
 		appendLine = a._date_ran[x], a._open[x], a._close[x], a._high[x], a._low[x]
 		candleAr.append(appendLine)
 		x+=1
-	candle = plt.subplot2grid((4,4), (0,0), rowspan=4, colspan=4)
-	candlestick(candle, candleAr)
-	plt.plot(a._vwap)
+	#candle = plt.subplot2grid((4,4), (0,0), rowspan=4, colspan=4)
+	#candlestick(candle, candleAr)
+	plt.plot(a._rsi)
 	#plt.plot(sma)
 	plt.show()
 
 main()
-'''
+
 
