@@ -5,10 +5,11 @@ import urllib
 import numpy as np
 
 #deletable imports
+'''
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.finance import candlestick
-
+'''
 class ErrorInit(Exception): 
     pass
 
@@ -45,21 +46,14 @@ class Stock:
 		#ensure enough data to calculate averages and period isn't 0
 		if len(array) > period and period != 0:
 			sma = np.zeros(len(array))
-			i = 0
-			first = 0
-			while i < period:
-				first += array[i]
-				i+=1
+			first = array[0:period].sum()
 			first = first/period
 			sma[:period] = first
 			i = period
 			#calculate Simple Moving Average
 			while i < len(array):
 				k = i-period
-				val = 0
-				while k < i:
-					val += array[k]
-					k+=1
+				val = array[k:i].sum()
 				val = val / period
 				sma[i] = val
 				i+=1
@@ -77,11 +71,7 @@ class Stock:
 		#ensure enough data points to calculate Exponential Moving Average
 		if len(array) > period and period != 0:
 			ema = np.zeros(len(array))
-			first = 0
-			i = 0
-			while i < period:
-				first += array[i]
-				i+=1
+			first = array[0:period].sum()
 			first = first/period
 			#calculate Exponential Moving Average
 			ema[:period] = first
@@ -163,7 +153,20 @@ class Stock:
 			self._rsi = np.zeros(10)
 			return self._rsi
 
+	def Stochastic(self, k_period=14, d_period=3):
+		k_vals = np.zeros(len(self._close))
+		d_vals = np.zeros(len(self._close))
+		i = k_period-1
+		window = k_period-1
+		while i < len(self._close):
+			lmin = min(self._low[i-window:i+1])
+			hmax = max(self._high[i-window:i+1])
+			k_vals[i] = 100*((self._close[i]-lmin)/(hmax-lmin))
+			i+=1
+		d_vals = self.simple_moving_avg(3,k_vals)
+		return k_vals, d_vals
 
+'''
 def main():
 	a = Stock("GPRO")
 	sma = a.simple_moving_avg(15)
@@ -172,6 +175,7 @@ def main():
 	a.ROC()
 	a.VWAP()
 	a.RSI()
+	k_vals, d_vals = a.Stochastic()
 	x=0
 	y=len(a._close)
 	candleAr = []
@@ -179,12 +183,18 @@ def main():
 		appendLine = a._date_ran[x], a._open[x], a._close[x], a._high[x], a._low[x]
 		candleAr.append(appendLine)
 		x+=1
-	#candle = plt.subplot2grid((4,4), (0,0), rowspan=4, colspan=4)
-	#candlestick(candle, candleAr)
-	plt.plot(a._rsi)
-	#plt.plot(sma)
+	candle = plt.subplot2grid((5,4), (0,0), rowspan=4, colspan=4)
+	stoch = plt.subplot2grid((5,4), (4,0), sharex=candle, rowspan=1, colspan=4)
+	candlestick(candle, candleAr)
+	#plt.plot(a._rsi)
+	candle.plot(sma)
+	candle.plot(ema)
+	candle.set_xlim(0,len(candleAr))
+	stoch.plot(k_vals)
+	stoch.plot(d_vals)
+	plt.setp(candle.get_xticklabels(), visible=False)
 	plt.show()
 
 main()
 
-
+'''
