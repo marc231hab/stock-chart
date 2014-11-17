@@ -44,7 +44,7 @@ class Stock:
 		if array == None:
 			array = self._close
 		#ensure enough data to calculate averages and period isn't 0
-		if len(array) > period and period != 0:
+		if len(array) >= period and period != 0:
 			sma = np.zeros(len(array))
 			first = array[0:period].sum()
 			first = first/period
@@ -69,7 +69,7 @@ class Stock:
 		if array == None:
 			array = self._close
 		#ensure enough data points to calculate Exponential Moving Average
-		if len(array) > period and period != 0:
+		if len(array) >= period and period != 0:
 			ema = np.zeros(len(array))
 			first = array[0:period].sum()
 			first = first/period
@@ -94,8 +94,7 @@ class Stock:
 		#calculate Signal Line
 		sig_lin = self.exp_moving_avg(sig,md_line)
 		#Calculate MACD Values
-		macd_hist = md_line - sig_lin
-		self._macd = macd_hist
+		return md_line, sig_lin
 
 	def ROC(self, period=10):
 		#calculate Rate of Change values
@@ -105,7 +104,7 @@ class Stock:
 			while i < len(self._close):
 				roc_vals[i] = ((self._close[i]-self._close[i-period])/self._close[i-period])*100
 				i+=1
-			self._roc = roc_vals
+			return roc_vals
 
 	def VWAP(self, period=1):
 		#calculate Volume Weight Average Price
@@ -119,7 +118,7 @@ class Stock:
 			tot_volume += self._volume[i]
 			vwap_vals[i] = tot_price/tot_volume
 			i+=1
-		self._vwap = vwap_vals
+		return vwap_vals
 
 	def RSI(self, period=14):
 		if len(self._close) > period and period != 0:
@@ -146,12 +145,12 @@ class Stock:
 				neg = (neg*(period-1)+neg_val)/period
 				rs = pos/neg
 				rsi_vals[i]=100.-100./(1.+rs)
-			self._rsi = rsi_vals
+			#self._rsi = rsi_vals
 			return rsi_vals
 		else:
 			print "not enough data"
-			self._rsi = np.zeros(10)
-			return self._rsi
+			#self._rsi = np.zeros(10)
+			return np.zeros(10)
 
 	def Stochastic(self, k_period=14, d_period=3):
 		k_vals = np.zeros(len(self._close))
@@ -166,16 +165,48 @@ class Stock:
 		d_vals = self.simple_moving_avg(3,k_vals)
 		return k_vals, d_vals
 
+	def Standard_dev(self, period, array):
+		std_dev = []
+		i = period
+		while i <= len(array):
+			sub = array[i-period:i]
+			std_dev.append(sub.std())
+			i+=1
+		return std_dev
+
+	def Bollinger_Bands(self, mult=2, period=20):
+		top = []
+		mid = []
+		bottom = []
+		i = 0
+		while i < period-1:
+			top.append(0)
+			mid.append(0)
+			bottom.append(0)
+			i+=1
+		i = period
+		while i <= len(self._close):
+			sma = self.simple_moving_avg(20, self._close[i-period:i])[-1]
+			sd = self.Standard_dev(20, self._close[i-period:i])[0]
+			t = sma + (sd*mult)
+			b = sma - (sd*mult)
+			top.append(t)
+			mid.append(sma)
+			bottom.append(b)
+			i+=1
+		return top, mid, bottom
+
 '''
 def main():
 	a = Stock("GPRO")
 	sma = a.simple_moving_avg(15)
 	ema = a.exp_moving_avg(10)
-	a.MACD()
-	a.ROC()
-	a.VWAP()
-	a.RSI()
+	md,sig = a.MACD()
+	rc = a.ROC()
+	vw = a.VWAP()
+	rs = a.RSI()
 	k_vals, d_vals = a.Stochastic()
+	t,m,b = a.Bollinger_Bands()
 	x=0
 	y=len(a._close)
 	candleAr = []
@@ -183,18 +214,34 @@ def main():
 		appendLine = a._date_ran[x], a._open[x], a._close[x], a._high[x], a._low[x]
 		candleAr.append(appendLine)
 		x+=1
-	candle = plt.subplot2grid((5,4), (0,0), rowspan=4, colspan=4)
-	stoch = plt.subplot2grid((5,4), (4,0), sharex=candle, rowspan=1, colspan=4)
+	candle = plt.subplot2grid((8,4), (0,0), rowspan=4, colspan=4)
+	macd_plot = plt.subplot2grid((8,4), (4,0), sharex=candle, rowspan=1, colspan=4)
+	roc_plot = plt.subplot2grid((8,4), (5,0), sharex=candle, rowspan=1, colspan=4)
+	rsi_plot = plt.subplot2grid((8,4), (6,0), sharex=candle, rowspan=1, colspan=4)
+	stoch = plt.subplot2grid((8,4), (7,0), sharex=candle, rowspan=1, colspan=4)
 	candlestick(candle, candleAr)
 	#plt.plot(a._rsi)
 	candle.plot(sma)
 	candle.plot(ema)
+	candle.plot(t,'--')
+	candle.plot(m)
+	candle.plot(b,'--')
+	#candle.plot(vw)
 	candle.set_xlim(0,len(candleAr))
+	macd_plot.plot(md)
+	macd_plot.plot(sig,'--')
+	roc_plot.plot(rc)
+	rsi_plot.plot(rs)
 	stoch.plot(k_vals)
-	stoch.plot(d_vals)
+	stoch.plot(d_vals,'--')
+	#stoch.fill_between(a._date_ran,k_vals,d_vals, where=(k_vals>=d_vals), facecolor='#00ccff', edgecolor='#00ccff')
+	#stoch.fill_between(a._date_ran,k_vals,d_vals, where=(k_vals<d_vals), facecolor='#00ffff', edgecolor='#00ccff')
 	plt.setp(candle.get_xticklabels(), visible=False)
+	plt.setp(macd_plot.get_xticklabels(), visible=False)
+	plt.setp(roc_plot.get_xticklabels(), visible=False)
+	plt.setp(rsi_plot.get_xticklabels(), visible=False)
 	plt.show()
 
 main()
-
 '''
+
