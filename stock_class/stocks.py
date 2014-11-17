@@ -137,7 +137,7 @@ class Stock:
 
 
 
-
+'''
 def main():
 	a = Stock("GPRO","1d")
 	sma = a.simple_moving_avg(15)
@@ -159,5 +159,5 @@ def main():
 	plt.show()
 
 main()
-
+'''
 
