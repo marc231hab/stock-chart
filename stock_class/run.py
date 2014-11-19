@@ -23,3 +23,4 @@ for key in nasdaq_list:
 	#plt.show()
 for key in macd_vals:
 	print key, macd_vals[key]
+	#v3 print(key, macd_vals[key])
