@@ -3,16 +3,19 @@
 # differences required/helpful for python v3 are denoted by #v3
 
 # required imports
-from urllib import urlopen
-#v3 from urllib.request import urlopen
+#from urllib import urlopen
+#v3 
+from urllib.request import urlopen
 import numpy as np
 
 # optional imports
+#deletable imports
 
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.finance import candlestick
-#v3 from matplotlib.finance import candlestick_ochl as candlestick
+#from matplotlib.finance import candlestick
+#v3 
+from matplotlib.finance import candlestick_ochl as candlestick
 
 class ErrorInit(Exception): 
     pass
@@ -24,8 +27,9 @@ class Stock:
 		self.initData()
 
 	def initData(self):
-		print self._name
-		#v3 print(self._name)
+		#print self._name
+		#v3 
+		print(self._name)
 		# link for data
 		link = 'http://chartapi.finance.yahoo.com/instrument/1.0/'+self._name+'/chartdata;type=quote;range='+self._duration+'/csv'
 		opened_file = urlopen(link)
@@ -44,9 +48,9 @@ class Stock:
 		self._dates, self._close, self._high, self._low, self._open, self._volume = np.loadtxt(opened_file, delimiter=',', unpack=True)#, converters={0: mdates.strpdate2num('%Y%m%d')})
 		self._date_ran = np.arange(len(self._dates))
 
-	def simple_moving_avg(self, period, array=None):
+	def simple_moving_avg(self, period, array=[]):
 		# if no array assigned then use closing prices
-		if array == None:
+		if array == []:
 			array = self._close
 		# ensure enough data to calculate averages and period isn't 0
 		if len(array) >= period and period != 0:
@@ -65,14 +69,15 @@ class Stock:
 			# return Simple moving average
 			return sma
 		else:
-			print "not enough data"
-			#v3 print("not enough data")
+			#print "not enough data"
+			#v3
+			print("not enough data")
 			return np.zeros(10)
 
 
-	def exp_moving_avg(self, period, array=None):
+	def exp_moving_avg(self, period, array=[]):
 		# if no array assigned use closing prices
-		if array == None:
+		if array == []:
 			array = self._close
 		# ensure enough data points to calculate Exponential Moving Average
 		if len(array) >= period and period != 0:
@@ -89,8 +94,9 @@ class Stock:
 			# return Exp Moving Average
 			return ema
 		else:
-			print "not enough data"
-			#v3 print("not enough data")
+			#print "not enough data"
+			#v3
+			print("not enough data")
 			return np.zeros(10)
 
 	def MACD(self,a=12,b=26,sig=9):
@@ -155,8 +161,9 @@ class Stock:
 			#self._rsi = rsi_vals
 			return rsi_vals
 		else:
-			print "not enough data"
-			#v3 print("not enough data")
+			#print "not enough data"
+			#v3
+			print("not enough data")
 			#self._rsi = np.zeros(10)
 			return np.zeros(10)
 
@@ -250,4 +257,5 @@ def main():
 	plt.setp(rsi_plot.get_xticklabels(), visible=False)
 	plt.show()
 
-main()
+#main()
+
