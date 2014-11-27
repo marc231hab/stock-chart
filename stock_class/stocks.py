@@ -48,6 +48,9 @@ class Stock:
 		self._dates, self._close, self._high, self._low, self._open, self._volume = np.loadtxt(opened_file, delimiter=',', unpack=True)#, converters={0: mdates.strpdate2num('%Y%m%d')})
 		self._date_ran = np.arange(len(self._dates))
 
+	def get_name(self):
+		return self._name
+
 	def simple_moving_avg(self, period, array=[]):
 		# if no array assigned then use closing prices
 		if array == []:
